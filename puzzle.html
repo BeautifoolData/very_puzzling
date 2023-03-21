@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Draggable GIFs</title>
+    <style>
+        .gif-container {
+    position: absolute;
+    z-index: -999;
+    }
+    .gif-container img {
+    pointer-events: none;
+    }    
+    .small img {
+    width: 125px;
+    height: 125px;
+    pointer-events: none;
+    }
+    input{
+    width: 40px;
+    }
+    </style>
+</head>
+
+<body>
+    Global Frame Change: <input type=text id="global-text-box" value="00" /> <button id='global-minus'>-</button><button id='global-plus'>+</button> <button id="toggle-all-images">Do Image Size</button> <a href="?size=small">Start with Smaller Images</a> <a href="?size=large">Start with Larger Images</a>
+    <div id="container">
+    </div>
+    <script>
+    var cur_img_size = 500;
+    var cols=5;
+
+    // check if the URL contains a "size" parameter
+    var urlParams = new URLSearchParams(window.location.search);
+    var imageSizeParam = urlParams.get('size');
+
+    // if the "size" parameter exists, set the image size accordingly
+    if (imageSizeParam === 'small') {
+        cur_img_size = 250;
+        cols = 10;
+    }
+
+    var numBlocks = 250;
+    var container = document.getElementById("container");
+    for (var i = 1; i <= numBlocks; i++) {
+        var tripleDigit = ("000" + i).slice(-3);
+        var newDiv = document.createElement("div");
+        newDiv.className = "gif-container";
+
+        // set position style with random top and left values
+        newDiv.style.position = "absolute";
+        newDiv.style.top = Math.floor(cur_img_size * Math.floor((i - 1) / cols)) + 50 + "px";
+        newDiv.style.left = Math.floor(cur_img_size * ((i - 1) % cols)) + "px";
+
+        // create the image tag and set its attributes
+        var img = document.createElement("img");
+        img.id = "img" + tripleDigit;
+        img.src = "images/thumb" + tripleDigit + "_frame00.gif";
+        img.width = cur_img_size;
+        img.height = cur_img_size;
+
+        // create the HTML code for the new div
+        newDiv.innerHTML = '<button id="down' + tripleDigit + '">-</button><input id="input' + tripleDigit + '" type="text" value="00" /><button id="up' + tripleDigit + '">+</button><input value="' + tripleDigit + '" disabled /><br>';
+        newDiv.appendChild(img);
+
+        // add the new div to the container element
+        container.appendChild(newDiv);
+    }
+
+    const containers = document.querySelectorAll('.gif-container');
+    var textboxes = document.querySelectorAll("input[type='text'][id^='input']");
+    var upButtons = document.querySelectorAll("button[id^='up']");
+    var downButtons = document.querySelectorAll("button[id^='down']");
+    let activeContainer = null;
+    let running_z = -998;
+
+    function onDragStart(event) {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') {
+            return
+        }
+        activeContainer = event.target.closest('.gif-container');
+    }
+
+    function onDragEnd(event) {
+        activeContainer = null;
+        running_z++;
+    }
+
+    function onDrag(event) {
+        if (activeContainer) {
+            event.preventDefault();
+            const x = event.clientX;
+            const y = event.clientY;
+            activeContainer.style.left = (x - cur_img_size / 2) + 'px';
+            activeContainer.style.top = (y - cur_img_size / 2) + 'px';
+            activeContainer.style.zIndex = running_z;
+        }
+    }
+
+    function updateImage(event) {
+        var textbox = event.target;
+        var image = document.getElementById("img" + event.target.id.slice(5, 9));
+        var newValue = image.src.slice(0, -6) + textbox.value + ".gif";
+        image.src = newValue;
+    }
+    containers.forEach(container => {
+        container.addEventListener('mousedown', onDragStart);
+    });
+    textboxes.forEach(textbox => {
+        textbox.addEventListener('change', updateImage);
+    });
+
+    window.addEventListener('mousemove', onDrag);
+    window.addEventListener('mouseup', onDragEnd);
+
+    function createUpClickHandler(textBox) {
+        return function() {
+            var currentValue = parseInt(textBox.value);
+            if (currentValue < 54) {
+                currentValue++;
+                textBox.value = ("00" + currentValue).slice(-2);
+                var changeEvent = new Event("change");
+                textBox.dispatchEvent(changeEvent);
+            }
+        };
+    }
+
+    function createDownClickHandler(textBox) {
+        return function() {
+            var currentValue = parseInt(textBox.value);
+            if (currentValue > 0) {
+                currentValue--;
+                textBox.value = ("00" + currentValue).slice(-2);
+                var changeEvent = new Event("change");
+                textBox.dispatchEvent(changeEvent);
+            }
+        };
+    }
+
+
+    for (var i = 0; i < upButtons.length; i++) {
+        var upButton = upButtons[i];
+        var downButton = downButtons[i];
+        var textBox = textboxes[i];
+
+        upButton.addEventListener("click", createUpClickHandler(textBox));
+        downButton.addEventListener("click", createDownClickHandler(textBox));
+    }
+
+    var globalTextBox = document.getElementById("global-text-box");
+
+    globalTextBox.addEventListener("change", function() {
+        var globalValue = parseInt(globalTextBox.value);
+        // loop through all the other text boxes and update their values
+        for (var i = 0; i < textboxes.length; i++) {
+            var textBox = textboxes[i];
+            textBox.value = ("00" + globalValue).slice(-2);
+            var changeEvent = new Event("change");
+            textBox.dispatchEvent(changeEvent);
+        }
+    });
+
+    var globalPlus = document.getElementById("global-plus");
+    var globalMinus = document.getElementById("global-minus");
+
+    globalPlus.addEventListener("click", createUpClickHandler(globalTextBox));
+    globalMinus.addEventListener("click", createDownClickHandler(globalTextBox));
+
+    var toggleAllBtn = document.getElementById('toggle-all-images');
+    toggleAllBtn.addEventListener('click', function() {
+        var images = document.querySelectorAll('.gif-container img');
+        for (var j = 0; j < images.length; j++) {
+            if (!images[j].style.width || images[j].style.width === '500px') {
+                images[j].style.width = '250px';
+                images[j].style.height = '250px';
+                cur_img_size = 250;
+            } else {
+                images[j].style.width = '500px';
+                images[j].style.height = '500px';
+                cur_img_size = 500;
+            }
+        }
+    });
+    </script>
+</body>
+
+</html>
