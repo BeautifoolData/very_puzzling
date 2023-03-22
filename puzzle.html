@@ -136,7 +136,7 @@
         newDiv.id = "container-" + i;
 
         newDiv.style.position = "absolute";
-        newDiv.style.top = Math.floor((cur_img_size + 40) * Math.floor((i - 1) / cols)) + 50 + cur_img_size * 6 + "px";
+        newDiv.style.top = Math.floor((cur_img_size + 40) * Math.floor((i - 1) / cols)) + 50 + cur_img_size * (250 / cols) + "px";
         newDiv.style.left = Math.floor((cur_img_size + 10) * ((i - 1) % cols)) + 25 + "px";
 
         // create the image tag and set its attributes
@@ -310,7 +310,7 @@
         for (var i = 1; i < 251; i++) {
             if (metadata[i][attributeFilter.value] == valueFilter.value) {
                 var moveDiv = document.getElementById("container-" + i);
-                moveDiv.style.top = Math.floor(running_count/10) * cur_img_size / 4*3 + 100 + "px";
+                moveDiv.style.top = Math.floor(running_count/10) * cur_img_size + 100 + "px";
                 moveDiv.style.left = ((running_count % 10) * cur_img_size) + 40 + "px";
                 running_count++;
             }
