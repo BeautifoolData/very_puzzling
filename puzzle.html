@@ -18,18 +18,25 @@
     pointer-events: none;
     }
     input{
-    width: 40px;
+    width: 60px;
+    }
+    .img-name{
+      float:right;
+      width: 120px;
+    }
+    img, input {
+      vertical-align: middle;
     }
     </style>
 </head>
 
 <body>
-    Global Frame Change: <input type=text id="global-text-box" value="00" /> <button id='global-minus'>-</button><button id='global-plus'>+</button> <button id="toggle-all-images">Do Image Size</button> <a href="?size=small">Start with Smaller Images</a> <a href="?size=large">Start with Larger Images</a>
+    Global Frame Change: <input type=text id="global-text-box" value="00" /> <button id='global-minus'>-</button><button id='global-plus'>+</button> <button id="toggle-all-images">Image Size Change</button> <a href="?size=small">Grid Smaller Images</a> <a href="?size=large">Grid Larger Images</a> - Hold Control and Drag image to bring them to top
     <div id="container">
     </div>
     <script>
     var cur_img_size = 500;
-    var cols=5;
+    var cols = 5;
 
     // check if the URL contains a "size" parameter
     var urlParams = new URLSearchParams(window.location.search);
@@ -50,8 +57,8 @@
 
         // set position style with random top and left values
         newDiv.style.position = "absolute";
-        newDiv.style.top = Math.floor(cur_img_size * Math.floor((i - 1) / cols)) + 50 + cur_img_size*4 + "px";
-        newDiv.style.left = Math.floor(cur_img_size * ((i - 1) % cols)) + "px";
+        newDiv.style.top = Math.floor((cur_img_size+20) * Math.floor((i - 1) / cols)) + 50 + cur_img_size * 4 + "px";
+        newDiv.style.left = Math.floor((cur_img_size+10) * ((i - 1) % cols)) +25+ "px";
 
         // create the image tag and set its attributes
         var img = document.createElement("img");
@@ -63,6 +70,7 @@
         // create the HTML code for the new div
         newDiv.innerHTML = '<button id="down' + tripleDigit + '">-</button><input id="input' + tripleDigit + '" type="text" value="00" /><button id="up' + tripleDigit + '">+</button><input value="' + tripleDigit + '" disabled /><br>';
         newDiv.appendChild(img);
+        newDiv.innerHTML = newDiv.innerHTML + '<br><input value="name" class="img-name" disabled />';
 
         // add the new div to the container element
         container.appendChild(newDiv);
@@ -94,6 +102,9 @@
             const y = event.pageY;
             activeContainer.style.left = (x - cur_img_size / 2) + 'px';
             activeContainer.style.top = (y - cur_img_size / 2) + 'px';
+            if (event.ctrlKey) {
+                activeContainer.style.top = '50px';
+            }
             activeContainer.style.zIndex = running_z;
         }
     }
