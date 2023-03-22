@@ -342,6 +342,7 @@
             for (let i = 0; i < 250; i++) { 
               let this_id = gifContainers[i].id.replace('container-', '');
               container_locations[this_id] = [gifContainers[i].style.top, gifContainers[i].style.left]; }
+              stuff.value = JSON.stringify(container_locations,null,0);
         }
         else {
           var loadLocations = JSON.parse(stuff_value);
