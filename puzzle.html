@@ -56,22 +56,28 @@
 
 <body>
     <div id='details-div'>test</div>
-    <div id='tools'><div>Global Frames: <input type=text id="global-text-box" value="00" /> <button id='global-minus'>- (d)</button><button id='global-plus'>+ (f)</button></div>
-    <div><button id="toggle-all-images">Toggle Size</button></div><div><a href="?size=small">Refresh.Smaller</a> <a href="?size=large">Refresh.Larger</a></div><div>Hold Control and Drag image to bring them to top</div><div><button id='toggle-text-button'>Toggle Boxes</button></div><div>Hold Shift and Hover for metadata</div><div>
-    <select id='attribute-filter' />
-    <option value="">-- Select an Attribute --</option>
-    <option value="Shape">Shape</option>
-    <option value="Dimensions">Dimensions</option>
-    <option value="Pattern">Pattern</option>
-    <option value="Background">Background</option>
-    <option value="Quantum Effect">Quantum Effect</option>
-    <option value="Quantum Computer">Quantum Computer</option>
-    </select>
-    <select id="value-filter" style="display: none;">
-        <option value="">-- Select a Value --</option>
-    </select><button id="bring-them-up">Bring them up</button>
-  </div>
-  </div>
+    <div id='tools'>
+        <div>Global Frames: <input type=text id="global-text-box" value="00" /> <button id='global-minus'>- (d)</button><button id='global-plus'>+ (f)</button></div>
+        <div><a href="?size=small">Refresh.Smaller</a> <a href="?size=large">Refresh.Larger</a></div>
+        <div>Hold Control and Drag image to bring them to top</div>
+        <div><button id="toggle-all-images">Toggle Size</button></div>
+        <div><button id='toggle-text-button'>Toggle Boxes</button></div>
+        <div>Hold Shift and Hover for metadata</div>
+        <div>
+            <select id='attribute-filter' />
+            <option value="">-- Select an Attribute --</option>
+            <option value="Shape">Shape</option>
+            <option value="Dimensions">Dimensions</option>
+            <option value="Pattern">Pattern</option>
+            <option value="Background">Background</option>
+            <option value="Quantum Effect">Quantum Effect</option>
+            <option value="Quantum Computer">Quantum Computer</option>
+            </select>
+            <select id="value-filter" style="display: none;">
+                <option value="">-- Select a Value --</option>
+            </select><button id="bring-them-up">Bring them up</button>
+        </div>
+    </div>
     <div id="container">
     </div>
     <script>
@@ -169,7 +175,7 @@
     }
 
     function onDrag(event) {
-      event.preventDefault();
+        event.preventDefault();
         if (activeContainer) {
             const x = event.pageX;
             const y = event.pageY;
@@ -192,14 +198,14 @@
     var detailsDiv = document.getElementById("details-div");
 
     function showDetails(event) {
-      event.preventDefault();
+        event.preventDefault();
         if (event.shiftKey) {
             let id = (event.target.id).replace('container-', '');
             detailsDiv.style.display = 'block';
             detailsDiv.style.position = 'absolute';
             detailsDiv.style.top = event.pageY + 15 + 'px';
             detailsDiv.style.left = event.pageX + 15 + 'px';
-            detailsDiv.innerHTML = "<pre>"+(JSON.stringify(metadata[id], null, 1))+"</pre>";
+            detailsDiv.innerHTML = "<pre>" + (JSON.stringify(metadata[id], null, 1)) + "</pre>";
         } else {
             detailsDiv.style.display = 'none';
         }
@@ -270,14 +276,14 @@
     globalMinus.addEventListener("click", createDownClickHandler(globalTextBox));
 
     function moveFrame(event) {
-      if (event.key === "f"){
-        var changeEvent = new Event("click");
-        globalPlus.dispatchEvent(changeEvent);
-      }
-      if (event.key === "d"){
-        var changeEvent = new Event("click");
-        globalMinus.dispatchEvent(changeEvent);
-      }
+        if (event.key === "f") {
+            var changeEvent = new Event("click");
+            globalPlus.dispatchEvent(changeEvent);
+        }
+        if (event.key === "d") {
+            var changeEvent = new Event("click");
+            globalMinus.dispatchEvent(changeEvent);
+        }
     }
 
     window.addEventListener('keydown', moveFrame);
@@ -300,11 +306,13 @@
 
     var moveAttribute = document.getElementById("bring-them-up");
     moveAttribute.addEventListener('click', function() {
+        var running_count = 0;
         for (var i = 1; i < 251; i++) {
             if (metadata[i][attributeFilter.value] == valueFilter.value) {
                 var moveDiv = document.getElementById("container-" + i);
-                moveDiv.style.top = Math.random() * (document.documentElement.clientHeight - cur_img_size - 50) / 4 * 3 + 40 + "px";
-                moveDiv.style.left = Math.random() * (document.documentElement.clientWidth) / 4 * 3 + 15 + "px";
+                moveDiv.style.top = Math.floor(running_count/10) * cur_img_size / 4*3 + 100 + "px";
+                moveDiv.style.left = ((running_count % 10) * cur_img_size) + 40 + "px";
+                running_count++;
             }
         }
     });
