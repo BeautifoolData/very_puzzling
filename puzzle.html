@@ -50,7 +50,7 @@
 
         // set position style with random top and left values
         newDiv.style.position = "absolute";
-        newDiv.style.top = Math.floor(cur_img_size * Math.floor((i - 1) / cols)) + 50 + "px";
+        newDiv.style.top = Math.floor(cur_img_size * Math.floor((i - 1) / cols)) + 50 + cur_img_size*4 + "px";
         newDiv.style.left = Math.floor(cur_img_size * ((i - 1) % cols)) + "px";
 
         // create the image tag and set its attributes
