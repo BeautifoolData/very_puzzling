@@ -39,13 +39,25 @@
       color: #ddd;
       display: none;
     }
+    #tools{
+      padding:10px;
+      margin:10px;
+      background:rgba(245,245,245,0.9);
+
+          }
+
+    #tools > div{
+      display: inline-block;
+      padding:10px;
+    }
 
     </style>
 </head>
 
 <body>
     <div id='details-div'>test</div>
-    Global Frame Change: <input type=text id="global-text-box" value="00" /> <button id='global-minus'>-</button><button id='global-plus'>+</button> <button id="toggle-all-images">Toggle Size</button> <a href="?size=small">Refresh.Smaller</a> <a href="?size=large">Refresh.Larger</a> - Hold Control and Drag image to bring them to top<button id='toggle-text-button'>Toggle Boxes</button>Hold Shift and Hover for metadata<br>
+    <div id='tools'><div>Global Frames: <input type=text id="global-text-box" value="00" /> <button id='global-minus'>- (d)</button><button id='global-plus'>+ (f)</button></div>
+    <div><button id="toggle-all-images">Toggle Size</button></div><div><a href="?size=small">Refresh.Smaller</a> <a href="?size=large">Refresh.Larger</a></div><div>Hold Control and Drag image to bring them to top</div><div><button id='toggle-text-button'>Toggle Boxes</button></div><div>Hold Shift and Hover for metadata</div><div>
     <select id='attribute-filter' />
     <option value="">-- Select an Attribute --</option>
     <option value="Shape">Shape</option>
@@ -58,6 +70,8 @@
     <select id="value-filter" style="display: none;">
         <option value="">-- Select a Value --</option>
     </select><button id="bring-them-up">Bring them up</button>
+  </div>
+  </div>
     <div id="container">
     </div>
     <script>
@@ -155,8 +169,8 @@
     }
 
     function onDrag(event) {
+      event.preventDefault();
         if (activeContainer) {
-            event.preventDefault();
             const x = event.pageX;
             const y = event.pageY;
             activeContainer.style.left = (x - cur_img_size / 2) + 'px';
@@ -178,6 +192,7 @@
     var detailsDiv = document.getElementById("details-div");
 
     function showDetails(event) {
+      event.preventDefault();
         if (event.shiftKey) {
             let id = (event.target.id).replace('container-', '');
             detailsDiv.style.display = 'block';
@@ -253,6 +268,19 @@
 
     globalPlus.addEventListener("click", createUpClickHandler(globalTextBox));
     globalMinus.addEventListener("click", createDownClickHandler(globalTextBox));
+
+    function moveFrame(event) {
+      if (event.key === "f"){
+        var changeEvent = new Event("click");
+        globalPlus.dispatchEvent(changeEvent);
+      }
+      if (event.key === "d"){
+        var changeEvent = new Event("click");
+        globalMinus.dispatchEvent(changeEvent);
+      }
+    }
+
+    window.addEventListener('keydown', moveFrame);
 
     var toggleAllBtn = document.getElementById('toggle-all-images');
     toggleAllBtn.addEventListener('click', function() {
