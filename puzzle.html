@@ -90,8 +90,8 @@
     function onDrag(event) {
         if (activeContainer) {
             event.preventDefault();
-            const x = event.clientX;
-            const y = event.clientY;
+            const x = event.pageX;
+            const y = event.pageY;
             activeContainer.style.left = (x - cur_img_size / 2) + 'px';
             activeContainer.style.top = (y - cur_img_size / 2) + 'px';
             activeContainer.style.zIndex = running_z;
