@@ -79,7 +79,8 @@
         </div>
         <div>
             <input type="text" id="save-load-text" />
-            <button id="save-load">Save/Load</button>
+            <button id="save-load">Save</button>
+            <button id="save-load-clear">Clear Textbox</button>
         </div>
     </div>
     <div id="container">
@@ -333,9 +334,24 @@
     });
 
     var saveLoad = document.getElementById('save-load');
+    var stuff = document.getElementById('save-load-text');
+    stuff.addEventListener('change',function(){
+      if (stuff.value === "") {
+        saveLoad.innerHTML="Save"
+      }
+      else{
+        saveLoad.innerHTML="Load"
+      }
+    });
+
+    var saveLoadClear = document.getElementById('save-load-clear');
+    saveLoadClear.addEventListener('click', function() {
+      stuff.value = "";
+      stuff.dispatchEvent(new Event('change'));
+    });
+
     var gifContainers = document.querySelectorAll('.gif-container');
     saveLoad.addEventListener('click', function() {
-        var stuff = document.getElementById('save-load-text');
         let stuff_value = stuff.value;
         if (stuff_value === "") {
             var container_locations = {};
@@ -343,6 +359,7 @@
               let this_id = gifContainers[i].id.replace('container-', '');
               container_locations[this_id] = [gifContainers[i].style.top, gifContainers[i].style.left]; }
               stuff.value = JSON.stringify(container_locations,null,0);
+              stuff.dispatchEvent(new Event('change'));
         }
         else {
           var loadLocations = JSON.parse(stuff_value);
