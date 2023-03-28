@@ -172,9 +172,11 @@
             return
         }
         activeContainer = event.target.closest('.gif-container');
+        activeContainer.style.opacity = 0.4;
     }
 
     function onDragEnd(event) {
+      activeContainer.style.opacity = 1;
         activeContainer = null;
         running_z++;
     }
